@@ -26,12 +26,15 @@ namespace cs
                 Console.WriteLine("程序结束。");
                 return;
             }
+            LINENUM = 20;
         }
 
         static int LINENUM = 0;
         static void Main(string[] args)
         {
-            init();
+            // init();
+            Plate.init();
+            Plate.print();
         }
     }
 }
