@@ -25,7 +25,7 @@ namespace cs
         public virtual void calSkill(int selx, int sely){ }
         public virtual void turnTurn(int x, int y){ }
         
-        public int wait = 0;
+        public int wait = 0, tire=0;
         public int waitx, waity;
     }
 }

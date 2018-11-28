@@ -7,6 +7,7 @@ namespace cs
     {
         public static Piece[][] plate;
         public static ConsoleColor[][] plateCol;
+        public static int[][] plateDist;//for tire
         public static void init(){
             plate = new Piece[15][];
             for(int i = 0; i < 15; ++ i){
@@ -44,6 +45,13 @@ namespace cs
                         plateCol[i][j] = ConsoleColor.Black;
                     }
                 }
+                plateDist = new int[15][];
+                for(int i = 0; i < 15; ++ i){
+                    plateDist[i] = new int[15];
+                    for(int j = 0; j < 15; ++ j){
+                        plateDist[i][j] = -1;
+                    }
+                }
                 Piece piece = new Sword(); piece.player = 0; plate[0][0] = piece; 
                 piece = new Sword(); piece.player = 1; plate[0][2] = piece; 
                 piece = new Lance(); piece.player = 1; plate[2][2] = piece; 
@@ -54,7 +62,7 @@ namespace cs
                 piece = new Crossbow(); piece.player = 0; plate[4][7] = piece; 
                 piece = new Shield(); piece.player = 1; plate[5][6] = piece; 
                 piece = new Shield(); piece.player = 0; plate[5][7] = piece; 
-                piece = new Crossbow(); piece.player = 1; plate[4][8] = piece; 
+                piece = new LightHorse(); piece.player = 1; plate[4][8] = piece; 
                 piece = new Shield(); piece.player = 1; plate[5][8] = piece; 
                 
                 colRefresh();
@@ -185,7 +193,7 @@ namespace cs
 
         public static void walk(int x, int y, int steps, int maxsteps, int origx, int origy){ //计算棋子移动范围：默认的走路
             if(!(inside(x,y)) || steps<0) return;
-            
+            plateDist[x][y]=steps;
             if (steps!=maxsteps && plate[x][y]!=null){
                 canStrike(Program.player, x,y,steps,maxsteps, origx, origy);
                 return;
@@ -213,8 +221,14 @@ namespace cs
             if(Program.curx==selx && Program.cury == sely) return false;
             if(plateCol[Program.curx][Program.cury]==ConsoleColor.DarkGray ||
                     plateCol[Program.curx][Program.cury]==ConsoleColor.DarkYellow){
-                plate[Program.curx][Program.cury]=plate[selx][sely];
+                Piece selpiece = plate[selx][sely]; 
+                plate[Program.curx][Program.cury]=selpiece;
                 plate[selx][sely]=null;
+
+                if((selpiece.getName()=="轻" || selpiece.getName()=="重") && 
+                    plateDist[Program.curx][Program.cury]==0){
+                    selpiece.tire=1;
+                }
                 return true;
             }
             return false;  
