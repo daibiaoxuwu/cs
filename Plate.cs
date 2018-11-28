@@ -28,9 +28,9 @@ namespace cs
                     string[] lines = line.Split(",");
                     for(int i = 0; i < 15; ++ i){
                         if(lines[i].Equals("S")){ //Sword
-                            Sword sword = new Sword();
-                            sword.player = player;
-                            plate[(player==0?xpos:15-xpos)][i] = sword;
+                            Sword piece = new Sword();
+                            piece.player = player;
+                            plate[(player==0?xpos:15-xpos)][i] = piece;
                         }
                     }
                     xpos++;
@@ -44,13 +44,21 @@ namespace cs
                         plateCol[i][j] = ConsoleColor.Black;
                     }
                 }
-                Sword sword = new Sword();
-                sword.player = 0;
-                plate[0][0] = sword;
+                Piece piece = new Sword();
+                piece.player = 0;
+                plate[0][0] = piece;
                 
-                sword = new Sword();
-                sword.player = 1;
-                plate[0][2] = sword;
+                piece = new Sword();
+                piece.player = 1;
+                plate[0][2] = piece;
+
+                piece = new Lance();
+                piece.player = 1;
+                plate[2][2] = piece;
+
+                piece = new Lance();
+                piece.player = 0;
+                plate[3][2] = piece;
 
                 colRefresh();
                 calMove();
@@ -87,7 +95,8 @@ namespace cs
                     if(plate[i][j]==null){
                         Console.Write("  ");
                     } else{
-                        Console.ForegroundColor=(plate[i][j].player==0 ? ConsoleColor.Blue : ConsoleColor.Red);
+                        Console.ForegroundColor=(plate[i][j].player==0 ? ConsoleColor.Blue :
+                        (plate[i][j].player==1? ConsoleColor.Red : ConsoleColor.White));
                         Console.Write(plate[i][j].getName());
                     }
                 }
@@ -105,9 +114,7 @@ namespace cs
         public static void calMove(){ //判断光标处棋子的移动，修改plateCol
             Piece piece = plate[Program.curx][Program.cury];
             if(piece==null || piece.player!=Program.player) return;
-            if(piece.getName()==" S"){
-                piece.walk(Program.curx, Program.cury);
-            }
+            piece.walk(Program.curx, Program.cury);
         }
         public static bool inside(int x, int y){
             return(x>=0 && x<15 && y>=0 && y<15);
@@ -116,29 +123,51 @@ namespace cs
             return  (Program.player==0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkRed);
         }
 
-        public static void walk(int x, int y, int steps, int maxsteps, int origx, int origy){ //计算棋子移动范围：默认的走路
-            if(!(inside(x,y)) || steps<0 ) return;
-            if (steps!=maxsteps && plate[x][y]!=null && plate[x][y].player!=Program.player){
-                string atkLevel = plate[origx][origy].getAtkLevel();
-                if(atkLevel=="粉碎" || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
+        public static bool canStrike(int x, int y,int steps, int maxsteps, int origx, int origy){
+            if(!(inside(x,y))) return false;
+            if(plate[x][y]==null){
+                plateCol[x][y]=ConsoleColor.DarkGray;
+                return true;
+            } else if(plate[x][y].player==Program.player){
+                return false;
+            }
+
+            string atkLevel = plate[origx][origy].getAtkLevel();
+            if(atkLevel=="粉碎" || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
+                plateCol[x][y]=ConsoleColor.DarkYellow;
+                return true;
+            }
+            switch(plate[x][y].getDefLevel()){
+                case "无":
                     plateCol[x][y]=ConsoleColor.DarkYellow;
-                    return;
-                }
-                switch(plate[x][y].getDefLevel()){
-                    case "无":
+                    return true;
+                case "轻甲":
+                    if(Math.Abs(x-origx)!=Math.Abs(y-origy)){
                         plateCol[x][y]=ConsoleColor.DarkYellow;
-                        return;
-                    case "轻甲":
-                        if(Math.Abs(x-origx)!=Math.Abs(y-origy))
-                            plateCol[x][y]=ConsoleColor.DarkYellow;
-                        return;
-                    case "重甲":
-                        if(x!=origx && y!=origy)
-                            plateCol[x][y]=ConsoleColor.DarkYellow;
-                        return;
-                    case "机械":
-                        return;
-                }
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case "重甲":
+                    if(x!=origx && y!=origy){
+                        plateCol[x][y]=ConsoleColor.DarkYellow;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case "机械":
+                    return false;
+                default: //?
+                    return false;
+            }
+        }
+
+        public static void walk(int x, int y, int steps, int maxsteps, int origx, int origy){ //计算棋子移动范围：默认的走路
+            if(!(inside(x,y)) || steps<0) return;
+            
+            if (steps!=maxsteps && plate[x][y]!=null){
+                canStrike(x,y,steps,maxsteps, origx, origy);
+                return;
             } else {
                 plateCol[x][y]=ConsoleColor.DarkGray;
             }
@@ -168,6 +197,10 @@ namespace cs
                 return true;
             }
             return false;  
+        }
+
+        public static bool walkable(int x, int y){
+            return(inside(x,y) && plate[x][y]==null);
         }
     }
 }
