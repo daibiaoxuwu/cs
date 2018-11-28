@@ -10,6 +10,7 @@ namespace cs
         public virtual string getAtkLevel(){return "普通";}
         public virtual bool canAtk(){return true;}
         public virtual bool isAgile(){return false;}//翻墙能力
+        public virtual bool ismovable(){return true;}//被挟持能力
         public virtual void walk(int x, int y){ //计算棋子移动范围 
             Plate.walk(x,y,2,2,x,y);
         }

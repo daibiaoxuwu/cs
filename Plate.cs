@@ -63,7 +63,7 @@ namespace cs
                 piece = new Shield(); piece.player = 1; plate[5][6] = piece; 
                 piece = new Shield(); piece.player = 0; plate[5][7] = piece; 
                 piece = new Rook(); piece.player = 1; plate[4][8] = piece; 
-                piece = new Shield(); piece.player = 1; plate[5][8] = piece; 
+                piece = new Elephant(); piece.player = 1; plate[5][8] = piece; 
                 
                 colRefresh();
                 calMove(0,0);
@@ -218,16 +218,22 @@ namespace cs
         }
 
         public static bool move(){
-            if(Program.curx==selx && Program.cury == sely) return false;
-            if(plateCol[Program.curx][Program.cury]==ConsoleColor.DarkGray ||
-                    plateCol[Program.curx][Program.cury]==ConsoleColor.DarkYellow){
-                Piece selpiece = plate[selx][sely]; 
-                plate[Program.curx][Program.cury]=selpiece;
-                plate[selx][sely]=null;
-
+            Piece selpiece = plate[selx][sely]; 
+            if(move(Program.curx, Program.cury, selx, sely)){
                 if(selpiece.getName()=="轻" && plateDist[Program.curx][Program.cury]==0){
                     selpiece.tire=1;
                 }
+                return true;
+            }
+            return false;
+        }
+        public static bool move(int dstx, int dsty, int selx, int sely){
+            if(dstx==selx && dsty == sely) return false;
+            if(plateCol[dstx][dsty]==ConsoleColor.DarkGray ||
+                    plateCol[dstx][dsty]==ConsoleColor.DarkYellow){
+                Piece selpiece = plate[selx][sely]; 
+                plate[dstx][dsty]=selpiece;
+                plate[selx][sely]=null;
                 return true;
             }
             return false;  

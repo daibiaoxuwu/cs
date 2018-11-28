@@ -6,6 +6,7 @@ namespace cs
     {
         public override string getName(){return "::";}
         public override bool canAtk(){return false;}
+        public override bool ismovable(){return false;}
         public override void walk(int x, int y){}
         int srcx, srcy;
         public ArrowSnipeToken(int srcx, int srcy, int player){
