@@ -62,7 +62,7 @@ namespace cs
                 piece = new Crossbow(); piece.player = 0; plate[4][7] = piece; 
                 piece = new Shield(); piece.player = 1; plate[5][6] = piece; 
                 piece = new Shield(); piece.player = 0; plate[5][7] = piece; 
-                piece = new LightHorse(); piece.player = 1; plate[4][8] = piece; 
+                piece = new Rook(); piece.player = 1; plate[4][8] = piece; 
                 piece = new Shield(); piece.player = 1; plate[5][8] = piece; 
                 
                 colRefresh();
