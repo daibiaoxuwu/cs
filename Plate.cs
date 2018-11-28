@@ -61,25 +61,19 @@ namespace cs
         public static void colRefresh(){
             for(int i = 0; i < 15; ++ i){
                 for(int j = 0; j < 15; ++ j){
-                    if(plate[i][j]==null){
-                        plateCol[i][j] = ConsoleColor.Black;
-                    } else if(plate[i][j].player==0){
-                        plateCol[i][j] = ConsoleColor.DarkBlue;
-                    } else {
-                        plateCol[i][j] = ConsoleColor.DarkRed;
-                    }
+                    plateCol[i][j] = ConsoleColor.Black;
                 }
             }
         }
 
         public static void print(){
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("玩家"+Program.player.ToString());
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0 1 2 3 4 5  ");
             for(int i = 0; i < 15; ++ i){
-                if(i<5) Console.BackgroundColor = ConsoleColor.DarkBlue;
-                else if(i>9) Console.BackgroundColor = ConsoleColor.DarkRed;
-                else Console.BackgroundColor = ConsoleColor.Black;
+                if(i<5) Console.ForegroundColor = ConsoleColor.Blue;
+                else if(i>9) Console.ForegroundColor = ConsoleColor.Red;
+                else Console.ForegroundColor = ConsoleColor.White;
 
                 if(i<9) Console.Write(" ");
                 Console.Write((i+1).ToString());
@@ -87,28 +81,25 @@ namespace cs
                 for(int j = 0; j < 15; ++ j){
                     Console.BackgroundColor = plateCol[i][j];
                     if(i==Program.curx && j==Program.cury){
-                        if(plate[i][j]!=null && Program.player != plate[i][j].player){
-                            Console.BackgroundColor = ConsoleColor.DarkYellow;
-                        } else {
-                            Console.BackgroundColor = (Program.player==0 ? ConsoleColor.Blue : ConsoleColor.Red);
-                        }
+                        Console.BackgroundColor = (Program.player==0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkRed);
                     } 
                            
                     if(plate[i][j]==null){
                         Console.Write("  ");
                     } else{
+                        Console.ForegroundColor=(plate[i][j].player==0 ? ConsoleColor.Blue : ConsoleColor.Red);
                         Console.Write(plate[i][j].getName());
                     }
                 }
-                if(i<5) Console.BackgroundColor = ConsoleColor.DarkBlue;
-                else if(i>9) Console.BackgroundColor = ConsoleColor.DarkRed;
-                else Console.BackgroundColor = ConsoleColor.Black;
+                if(i<5) Console.ForegroundColor = ConsoleColor.Blue;
+                else if(i>9) Console.ForegroundColor = ConsoleColor.Red;
+                else Console.ForegroundColor = ConsoleColor.White;
                 if(i<9) Console.Write(" ");
                 Console.WriteLine((i+1).ToString());
             }
-            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0 1 2 3 4 5  ");
-            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void calMove(){ //判断光标处棋子的移动，修改plateCol
@@ -130,26 +121,27 @@ namespace cs
             if (steps!=maxsteps && plate[x][y]!=null && plate[x][y].player!=Program.player){
                 string atkLevel = plate[origx][origy].getAtkLevel();
                 if(atkLevel=="粉碎" || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
-                    plateCol[x][y]=ConsoleColor.DarkGray;
+                    plateCol[x][y]=ConsoleColor.DarkYellow;
                     return;
                 }
                 switch(plate[x][y].getDefLevel()){
                     case "无":
-                        plateCol[x][y]=ConsoleColor.DarkGray;
+                        plateCol[x][y]=ConsoleColor.DarkYellow;
                         return;
                     case "轻甲":
                         if(Math.Abs(x-origx)!=Math.Abs(y-origy))
-                            plateCol[x][y]=ConsoleColor.DarkGray;
+                            plateCol[x][y]=ConsoleColor.DarkYellow;
                         return;
                     case "重甲":
                         if(x!=origx && y!=origy)
-                            plateCol[x][y]=ConsoleColor.DarkGray;
+                            plateCol[x][y]=ConsoleColor.DarkYellow;
                         return;
                     case "机械":
                         return;
                 }
+            } else {
+                plateCol[x][y]=ConsoleColor.DarkGray;
             }
-            plateCol[x][y]=ConsoleColor.DarkGray;
             walk(x-1,y,steps-1,maxsteps, origx, origy);
             walk(x+1,y,steps-1,maxsteps, origx, origy);
             walk(x,y-1,steps-1,maxsteps, origx, origy);
@@ -169,7 +161,8 @@ namespace cs
 
         public static bool move(){
             if(Program.curx==selx && Program.cury == sely) return false;
-            if(plateCol[Program.curx][Program.cury]==ConsoleColor.DarkGray){
+            if(plateCol[Program.curx][Program.cury]==ConsoleColor.DarkGray ||
+                    plateCol[Program.curx][Program.cury]==ConsoleColor.DarkYellow){
                 plate[Program.curx][Program.cury]=plate[selx][sely];
                 plate[selx][sely]=null;
                 return true;
