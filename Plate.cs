@@ -50,6 +50,8 @@ namespace cs
                 piece = new Lance(); piece.player = 0; plate[3][2] = piece; 
                 piece = new Arrow(); piece.player = 1; plate[4][2] = piece; 
                 piece = new Arrow(); piece.player = 0; plate[4][4] = piece; 
+                piece = new Crossbow(); piece.player = 1; plate[4][6] = piece; 
+                piece = new Crossbow(); piece.player = 0; plate[4][7] = piece; 
                 
                 colRefresh();
                 calMove(0,0);

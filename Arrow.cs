@@ -12,16 +12,13 @@ namespace cs
         public override bool canAtk(){return false;}
         public override bool isAgile(){return true;}
         public override string getPrompt(){return "U-箭雨 I-狙击";}
-        public override void walk(int x, int y){
-            Plate.walk(x,y,2,2,x,y);
-        }
         public override void calSkill(int selx, int sely){
             for(int i = Math.Max(0, selx - arrowLength); i <= Math.Min(14, selx + arrowLength); ++i){
                 int jlen = arrowLength - Math.Abs(selx - i);
                 for(int j = Math.Max(0, sely - jlen); j <= Math.Min(14, sely + jlen); ++j ){
                     if(i==selx && j==sely) continue;
                     if(selectedSkill=="I" && Plate.plate[i][j]!=null) continue;
-                    Plate.canStrike(Program.player, i, j, 0, 0, selx, sely, true);
+                    Plate.canStrike(player, i, j, 0, 0, selx, sely, true);
                 }
             }
         }
