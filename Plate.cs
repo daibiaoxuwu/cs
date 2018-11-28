@@ -5,8 +5,8 @@ namespace cs
 {
     abstract class Plate
     {
-        static Piece[][] plate;
-        static ConsoleColor[][] plateCol;
+        public static Piece[][] plate;
+        public static ConsoleColor[][] plateCol;
         public static void init(){
             plate = new Piece[15][];
             for(int i = 0; i < 15; ++ i){
@@ -44,24 +44,15 @@ namespace cs
                         plateCol[i][j] = ConsoleColor.Black;
                     }
                 }
-                Piece piece = new Sword();
-                piece.player = 0;
-                plate[0][0] = piece;
+                Piece piece = new Sword(); piece.player = 0; plate[0][0] = piece; 
+                piece = new Sword(); piece.player = 1; plate[0][2] = piece; 
+                piece = new Lance(); piece.player = 1; plate[2][2] = piece; 
+                piece = new Lance(); piece.player = 0; plate[3][2] = piece; 
+                piece = new Arrow(); piece.player = 1; plate[4][2] = piece; 
+                piece = new Arrow(); piece.player = 0; plate[4][4] = piece; 
                 
-                piece = new Sword();
-                piece.player = 1;
-                plate[0][2] = piece;
-
-                piece = new Lance();
-                piece.player = 1;
-                plate[2][2] = piece;
-
-                piece = new Lance();
-                piece.player = 0;
-                plate[3][2] = piece;
-
                 colRefresh();
-                calMove();
+                calMove(0,0);
             }
 
             
@@ -111,10 +102,10 @@ namespace cs
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void calMove(){ //判断光标处棋子的移动，修改plateCol
-            Piece piece = plate[Program.curx][Program.cury];
+        public static void calMove(int x, int y){ //判断光标处棋子的移动，修改plateCol
+            Piece piece = plate[x][y];
             if(piece==null || piece.player!=Program.player) return;
-            piece.walk(Program.curx, Program.cury);
+            piece.walk(x, y);
         }
         public static bool inside(int x, int y){
             return(x>=0 && x<15 && y>=0 && y<15);
@@ -123,20 +114,23 @@ namespace cs
             return  (Program.player==0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkRed);
         }
 
-        public static bool canStrike(int x, int y,int steps, int maxsteps, int origx, int origy){
+        public static bool canStrike(int player, int x, int y,int steps, int maxsteps, int origx, int origy, bool spAtk = false){
+            //在空格子和可以击杀时为true.否则,出界，为队友，被防御均为false.
             if(!(inside(x,y))) return false;
             if(plate[x][y]==null){
                 plateCol[x][y]=ConsoleColor.DarkGray;
                 return true;
-            } else if(plate[x][y].player==Program.player){
+            } else if(plate[x][y].player==player){
                 return false;
             }
 
+            if(!plate[origx][origy].canAtk() && !spAtk) return false;
             string atkLevel = plate[origx][origy].getAtkLevel();
             if(atkLevel=="粉碎" || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
                 plateCol[x][y]=ConsoleColor.DarkYellow;
                 return true;
             }
+            //刺杀：没有return说明为机械。
             switch(plate[x][y].getDefLevel()){
                 case "无":
                     plateCol[x][y]=ConsoleColor.DarkYellow;
@@ -166,7 +160,7 @@ namespace cs
             if(!(inside(x,y)) || steps<0) return;
             
             if (steps!=maxsteps && plate[x][y]!=null){
-                canStrike(x,y,steps,maxsteps, origx, origy);
+                canStrike(Program.player, x,y,steps,maxsteps, origx, origy);
                 return;
             } else {
                 plateCol[x][y]=ConsoleColor.DarkGray;
@@ -202,5 +196,45 @@ namespace cs
         public static bool walkable(int x, int y){
             return(inside(x,y) && plate[x][y]==null);
         }
+
+        public static int listenKey(string answer){
+            Piece piece = plate[selx][sely];
+            if(!piece.getPrompt().Equals("")){
+                string[] prompts = piece.getPrompt().Split(" ");
+                
+                foreach(string prompt in prompts){
+                    if(answer[0]==prompt[0]){
+                        piece.selectedSkill = answer;
+                        return 2;
+                    }
+                }
+            }
+            if(answer.Equals("J")){
+                plate[selx][sely].wait=0;
+                move();
+                return 0;
+            } 
+            return -1;
+        }
+        public static string getPrompt(){
+            return plate[selx][sely].getPrompt();
+        }
+
+        public static bool releaseSkill(){
+            return plate[selx][sely].releaseSkill(selx, sely, Program.curx, Program.cury);
+        }
+        public static void calSkill(){
+            plate[selx][sely].calSkill(selx, sely);
+        }
+        //arrows!
+
+        public static void turnTurn(){
+            //处理对面回合的箭雨
+            for(int i=0;i<15;++i)
+                for(int j=0;j<15;++j){
+                    if(plate[i][j]!=null) plate[i][j].turnTurn(i,j);
+                }
+        }
+      
     }
 }

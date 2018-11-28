@@ -32,6 +32,15 @@ namespace cs
         static int LINENUM = 0;
         public static int curx = 0, cury = 0;
         public static int player = 0, mode = 0;
+
+
+        static void turnTurn(){
+            Plate.turnTurn();
+            mode=0;
+            player=1-player;
+            Plate.colRefresh();
+        }
+
         static void Main(string[] args)
         {
             // init();
@@ -39,11 +48,11 @@ namespace cs
             
 
 
+            string lastSkill="";
             while(true){
                 Plate.print();
-
                 if(mode==0){                
-                    Console.WriteLine("ASDF 移动 J 选择棋子");
+                    Console.WriteLine("ASDF-移动 J-选择棋子");
                     string answer=Console.ReadKey().Key.ToString();
                     if(answer=="W" && curx>0) curx--;
                     else if(answer=="S" && curx<14) curx++;
@@ -56,9 +65,9 @@ namespace cs
                         }
                     }
                     Plate.colRefresh();
-                    Plate.calMove();
-                } else {
-                    Console.WriteLine("ASDF 移动 J 行动 K 取消选择");
+                    Plate.calMove(curx, cury);
+                } else if(mode==1){
+                    Console.WriteLine("ASDF-移动 J-行动 K-取消选择 " + Plate.getPrompt());
                     string answer=Console.ReadKey().Key.ToString();
                     if(answer=="W" && curx>0) curx--;
                     else if(answer=="S" && curx<14) curx++;
@@ -67,18 +76,39 @@ namespace cs
                     else if(answer=="K"){
                         mode=0;
                         Plate.colRefresh();
-                        Plate.calMove();
-                    } else if(answer=="J"){
-                        if(Plate.move()){
-                            mode=0;
-                            player=1-player;
+                        continue;
+                    } else {
+                        int response = Plate.listenKey(answer);
+                        if(response==0){ //移动，返回0
+                            turnTurn();
+                            continue;
+                        } else if(response!=-1){ //不是无效按键
+                            lastSkill=answer;
+                            mode=response;
                             Plate.colRefresh();
-                            Plate.calMove();
+                            Plate.calSkill();
+                            continue;
+                        }
+                    }
+                } else if(mode==2){ //技能
+                    Console.WriteLine("ASDF-移动 J-释放"+lastSkill+"技能 K-取消释放");
+                    string answer=Console.ReadKey().Key.ToString();
+                    if(answer=="W" && curx>0) curx--;
+                    else if(answer=="S" && curx<14) curx++;
+                    else if(answer=="D" && cury<14) cury++;
+                    else if(answer=="A" && cury>0) cury--;
+                    else if(answer=="K"){
+                        mode=1;
+                        Plate.colRefresh();
+                        Plate.calMove(Plate.selx, Plate.sely);
+                        continue;
+                    } else if(answer=="J") {
+                        if(Plate.releaseSkill()){
+                            turnTurn();
                             continue;
                         }
                     }
                 }
-
             }
             
         }

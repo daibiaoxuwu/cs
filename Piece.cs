@@ -8,7 +8,24 @@ namespace cs
         public abstract string getName();
         public virtual string getDefLevel(){return "无";}
         public virtual string getAtkLevel(){return "普通";}
+        public virtual bool canAtk(){return true;}
         public virtual bool isAgile(){return false;}//翻墙能力
-        public abstract void walk(int x, int y);
+        public virtual void walk(int x, int y){ //计算棋子移动范围 
+            Plate.walk(x,y,2,2,x,y);
+        }
+
+        //skill
+        public virtual string getPrompt(){
+            return "";
+        }
+        public string selectedSkill;
+        public virtual bool releaseSkill(int srcx, int srcy, int dstx, int dsty){
+            return false;
+        }
+        public virtual void calSkill(int selx, int sely){ }
+        public virtual void turnTurn(int x, int y){ }
+        
+        public int wait = 0;
+        public int waitx, waity;
     }
 }
