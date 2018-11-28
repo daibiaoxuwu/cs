@@ -225,8 +225,7 @@ namespace cs
                 plate[Program.curx][Program.cury]=selpiece;
                 plate[selx][sely]=null;
 
-                if((selpiece.getName()=="轻" || selpiece.getName()=="重") && 
-                    plateDist[Program.curx][Program.cury]==0){
+                if(selpiece.getName()=="轻" && plateDist[Program.curx][Program.cury]==0){
                     selpiece.tire=1;
                 }
                 return true;
