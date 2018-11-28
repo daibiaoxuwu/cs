@@ -74,6 +74,7 @@ namespace cs
 
         public static void print(){
             Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("玩家"+Program.player.ToString());
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0 1 2 3 4 5  ");
             for(int i = 0; i < 15; ++ i){
                 if(i<5) Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -124,13 +125,35 @@ namespace cs
             return  (Program.player==0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkRed);
         }
 
-        public static void walk(int x, int y, int steps, int maxsteps, string atkLevel){ //计算棋子移动范围：默认的走路
-            if(!(inside(x,y)) || steps<0 || (steps!=maxsteps && plate[x][y]!=null)) return;
+        public static void walk(int x, int y, int steps, int maxsteps, int origx, int origy){ //计算棋子移动范围：默认的走路
+            if(!(inside(x,y)) || steps<0 ) return;
+            if (steps!=maxsteps && plate[x][y]!=null && plate[x][y].player!=Program.player){
+                string atkLevel = plate[origx][origy].getAtkLevel();
+                if(atkLevel=="粉碎" || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
+                    plateCol[x][y]=ConsoleColor.DarkGray;
+                    return;
+                }
+                switch(plate[x][y].getDefLevel()){
+                    case "无":
+                        plateCol[x][y]=ConsoleColor.DarkGray;
+                        return;
+                    case "轻甲":
+                        if(Math.Abs(x-origx)!=Math.Abs(y-origy))
+                            plateCol[x][y]=ConsoleColor.DarkGray;
+                        return;
+                    case "重甲":
+                        if(x!=origx && y!=origy)
+                            plateCol[x][y]=ConsoleColor.DarkGray;
+                        return;
+                    case "机械":
+                        return;
+                }
+            }
             plateCol[x][y]=ConsoleColor.DarkGray;
-            walk(x-1,y,steps-1,maxsteps,atkLevel);
-            walk(x+1,y,steps-1,maxsteps,atkLevel);
-            walk(x,y-1,steps-1,maxsteps,atkLevel);
-            walk(x,y+1,steps-1,maxsteps,atkLevel);
+            walk(x-1,y,steps-1,maxsteps, origx, origy);
+            walk(x+1,y,steps-1,maxsteps, origx, origy);
+            walk(x,y-1,steps-1,maxsteps, origx, origy);
+            walk(x,y+1,steps-1,maxsteps, origx, origy);
         }
 
         public static int selx, sely;
