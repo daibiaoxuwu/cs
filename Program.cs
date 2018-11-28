@@ -108,6 +108,8 @@ namespace cs
                             continue;
                         }
                     }
+                    Plate.colRefresh();
+                    Plate.calSkill();
                 }
             }
             

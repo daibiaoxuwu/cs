@@ -52,6 +52,10 @@ namespace cs
                 piece = new Arrow(); piece.player = 0; plate[4][4] = piece; 
                 piece = new Crossbow(); piece.player = 1; plate[4][6] = piece; 
                 piece = new Crossbow(); piece.player = 0; plate[4][7] = piece; 
+                piece = new Shield(); piece.player = 1; plate[5][6] = piece; 
+                piece = new Shield(); piece.player = 0; plate[5][7] = piece; 
+                piece = new Crossbow(); piece.player = 1; plate[4][8] = piece; 
+                piece = new Shield(); piece.player = 1; plate[5][8] = piece; 
                 
                 colRefresh();
                 calMove(0,0);
@@ -75,6 +79,7 @@ namespace cs
                 if(i<5) Console.ForegroundColor = ConsoleColor.Blue;
                 else if(i>9) Console.ForegroundColor = ConsoleColor.Red;
                 else Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor=ConsoleColor.Black;
 
                 if(i<9) Console.Write(" ");
                 Console.Write((i+1).ToString());
@@ -96,6 +101,7 @@ namespace cs
                 if(i<5) Console.ForegroundColor = ConsoleColor.Blue;
                 else if(i>9) Console.ForegroundColor = ConsoleColor.Red;
                 else Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor=ConsoleColor.Black;
                 if(i<9) Console.Write(" ");
                 Console.WriteLine((i+1).ToString());
             }
@@ -151,6 +157,25 @@ namespace cs
                     } else {
                         return false;
                     }
+                case "盾牌":
+                    if(plate[x][y].waity==0 && plate[x][y].waitx==0){
+                        plate[x][y].waitx = (plate[x][y].player==0 ? 1 : -1);
+                    }
+                    if(Math.Sign(plate[x][y].waity) != Math.Sign(origy-y) ||
+                            Math.Sign(plate[x][y].waitx) != Math.Sign(origx-x)){
+                        plateCol[x][y]=ConsoleColor.DarkYellow;
+                        return true;
+                    }
+
+                    if(plate[x][y].waity==0){
+                        if(origy==y) return false;
+                    } else if(plate[x][y].waitx==0){
+                        if(origx==x) return false;
+                    } else if((double)(origx-x)/(plate[x][y].waitx)==(double)(origy-y)/(plate[x][y].waity)){
+                        return false;
+                    }
+                    plateCol[x][y]=ConsoleColor.DarkYellow;
+                    return true;
                 case "机械":
                     return false;
                 default: //?
@@ -212,10 +237,12 @@ namespace cs
                 }
             }
             if(answer.Equals("J")){
-                plate[selx][sely].wait=0;
-                move();
-                return 0;
-            } 
+                Piece movePiece = plate[selx][sely];
+                if(move()){
+                    movePiece.wait=0;
+                    return 0;
+                }
+            }
             return -1;
         }
         public static string getPrompt(){

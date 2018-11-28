@@ -18,7 +18,7 @@ namespace cs
                 for(int j = Math.Max(0, sely - jlen); j <= Math.Min(14, sely + jlen); ++j ){
                     if(i==selx && j==sely) continue;
                     if(selectedSkill=="I" && Plate.plate[i][j]!=null) continue;
-                    Plate.canStrike(player, i, j, 0, 0, selx, sely, true);
+                    Plate.plateCol[i][j]=ConsoleColor.DarkGray;
                 }
             }
         }
