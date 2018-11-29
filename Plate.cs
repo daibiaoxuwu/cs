@@ -52,29 +52,52 @@ namespace cs
                         plateDist[i][j] = -1;
                     }
                 }
-                Piece piece = new Sword(); piece.player = 0; plate[4][1] = piece; 
+                Piece piece = new Sword(); piece.player = 0; plate[3][1] = piece; 
                 piece = new Sword(); piece.player = 0; plate[4][3] = piece; 
                 piece = new Sword(); piece.player = 0; plate[4][5] = piece; 
                 piece = new Sword(); piece.player = 0; plate[2][7] = piece; 
                 piece = new Sword(); piece.player = 0; plate[2][9] = piece; 
-
                 piece = new Lance(); piece.player = 0; plate[4][4] = piece; 
                 piece = new Lance(); piece.player = 0; plate[4][2] = piece; 
                 piece = new Lance(); piece.player = 0; plate[4][13] = piece; 
                 piece = new Lance(); piece.player = 0; plate[3][12] = piece; 
-                piece = new Lance(); piece.player = 0; plate[4][11] = piece; 
-
+                piece = new Lance(); piece.player = 0; plate[3][11] = piece; 
                 piece = new Arrow(); piece.player = 0; plate[3][5] = piece; 
                 piece = new Arrow(); piece.player = 0; plate[4][4] = piece; 
-                piece = new Flag(); piece.player = 1; plate[10][6] = piece; 
                 piece = new Crossbow(); piece.player = 0; plate[4][7] = piece; 
-                piece = new Shield(); piece.player = 1; plate[5][6] = piece; 
-                piece = new Flag(); piece.player = 0; plate[5][7] = piece; 
-                piece = new Rook(); piece.player = 1; plate[4][8] = piece; 
-                piece = new Elephant(); piece.player = 1; plate[5][8] = piece; 
-                piece = new Dragon(); piece.player = 0; plate[10][10] = piece; 
-                piece = new King(); piece.player = 0; plate[10][11] = piece; 
-                piece = new King(); piece.player = 1; plate[11][11] = piece; 
+                piece = new Crossbow(); piece.player = 0; plate[4][8] = piece; 
+                piece = new Shield(); piece.player = 0; plate[1][7] = piece; 
+                piece = new Shield(); piece.player = 0; plate[1][9] = piece; 
+                piece = new Rook(); piece.player = 0; plate[3][0] = piece; 
+                piece = new Rook(); piece.player = 0; plate[3][14] = piece; 
+                piece = new LightHorse(); piece.player = 0; plate[4][0] = piece; 
+                piece = new LightHorse(); piece.player = 0; plate[4][1] = piece; 
+                piece = new HeavyHorse(); piece.player = 0; plate[3][10] = piece; 
+                piece = new HeavyHorse(); piece.player = 0; plate[4][14] = piece; 
+                piece = new Elephant(); piece.player = 0; plate[4][9] = piece; 
+                piece = new Flag(); piece.player = 0; plate[4][10] = piece; 
+                piece = new Ram(); piece.player = 0; plate[4][11] = piece; 
+                piece = new Catapult(); piece.player = 0; plate[1][3] = piece; 
+                piece = new WildFire(); piece.player = 0; plate[1][9] = piece; 
+                piece = new Tower(); piece.player = 0; plate[1][8] = piece; 
+                piece = new Assassin(); piece.player = 0; plate[3][8] = piece; 
+                piece = new Dragon(); piece.player = 0; plate[2][10] = piece; 
+                piece = new King(); piece.player = 0; plate[0][7] = piece; 
+                piece = new Wall(); piece.player = 0; plate[1][5] = piece; 
+                piece = new Wall(); piece.player = 0; plate[1][6] = piece; 
+                piece = new Wall(); piece.player = 0; plate[2][6] = piece; 
+                piece = new Wall(); piece.player = 0; plate[3][6] = piece; 
+
+                piece = new Wall(); piece.player = 2; plate[7][6] = piece; 
+                piece = new Wall(); piece.player = 2; plate[7][8] = piece; 
+                piece = new Wall(); piece.player = 2; plate[6][7] = piece; 
+                piece = new Wall(); piece.player = 2; plate[8][7] = piece; 
+                piece = new Wall(); piece.player = 2; plate[7][7] = piece; 
+
+                piece = new King(); piece.player = 1; plate[14][7] = piece; 
+                piece = new Flag(); piece.player = 1; plate[14][10] = piece; 
+                for(int i=0;i<14;i+=2){ piece = new Sword(); piece.player = 1; plate[10][i] = piece; }
+                for(int i=1;i<14;i+=2){ piece = new Lance(); piece.player = 1; plate[10][i] = piece; }
                 
                 colRefresh();
                 calMove(0,0);
@@ -105,7 +128,7 @@ namespace cs
 
                 for(int j = 0; j < 15; ++ j){
                     Console.BackgroundColor = plateCol[i][j];
-                    if(plate[i][j]!=null && plate[i][j].dizzy>0) Console.BackgroundColor=(Program.player==0 ? ConsoleColor.DarkCyan : ConsoleColor.DarkMagenta);
+                    if(plate[i][j]!=null && plate[i][j].dizzy>0) Console.BackgroundColor=(plate[i][j].player==0 ? ConsoleColor.DarkCyan : ConsoleColor.DarkMagenta);
                     if(i==Program.curx && j==Program.cury){
                         Console.BackgroundColor = (Program.player==0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkRed);
                     } 
@@ -154,7 +177,7 @@ namespace cs
 
             if(!plate[origx][origy].canAtk() && !spAtk) return false;
             string atkLevel = plate[origx][origy].getAtkLevel();
-            if(atkLevel=="粉碎" || plate[x][y].dizzy>0 && (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
+            if(atkLevel=="粉碎" || plate[x][y].dizzy>0 || (atkLevel=="刺杀" && plate[x][y].getDefLevel()!="机械")){
                 plateCol[x][y]=ConsoleColor.DarkYellow;
                 return true;
             }
@@ -245,7 +268,6 @@ namespace cs
                     plateCol[dstx][dsty]==ConsoleColor.DarkYellow){
                 Piece selpiece = plate[selx][sely]; 
 
-                if(selpiece is Assassin) Program.assassin[Program.player]=true;
                 plate[dstx][dsty]=selpiece;
                 plate[selx][sely]=null;
                 
@@ -266,7 +288,7 @@ namespace cs
                 foreach(string prompt in prompts){
                     if(answer[0]==prompt[0]){
                         piece.selectedSkill = answer;
-                        return 2;
+                        if(piece is Assassin){piece.tire=3;return 0;} else return 2;
                     }
                 }
             }

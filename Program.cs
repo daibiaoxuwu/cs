@@ -35,7 +35,6 @@ namespace cs
 
 
         static bool[] flag;
-        public static bool[] assassin;
         static void turnTurn(){
             Plate.turnTurn();
             for(int p=0;p<=1;++p){
@@ -75,7 +74,7 @@ namespace cs
             }
 
             mode=0;
-            if(!assassin[1-player]) player=1-player; else assassin[1-player]=false;
+            player=1-player;
             Plate.colRefresh();
         }
         public static int[] stone;
@@ -86,8 +85,6 @@ namespace cs
             Plate.init();
             flag=new bool[2];
             flag[0]=true;flag[1]=true;
-            assassin=new bool[2];
-            assassin[0]=false;assassin[1]=false;
             stone=new int[2];
             stone[0]=1;stone[1]=1;
 
@@ -107,12 +104,18 @@ namespace cs
                     else if(answer=="J"){
                         if(Plate.selectPiece()){
                             mode=1;
+                            isPush=false;
+                            issteal=false;
+                            Plate.colRefresh();
+                            Plate.calMove(curx, cury);
                             continue;
                         }
                     }
                     Plate.colRefresh();
                     Plate.calMove(curx, cury);
                 } else if(mode==1){
+                    Plate.colRefresh();
+                    Plate.calMove(Plate.selx, Plate.sely);
                     Console.Write("ASDF-移动 J-行动 K-取消选择 " + Plate.getPrompt());
                     if(Plate.plate[Plate.selx][Plate.sely]!=null && !Plate.plate[Plate.selx][Plate.sely].ismechanics()){
                     if(Plate.selx>0 && Plate.plate[Plate.selx-1][Plate.sely]!=null && Plate.plate[Plate.selx-1][Plate.sely].ismechanics() && Plate.plate[Plate.selx-1][Plate.sely].player==player ||
