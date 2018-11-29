@@ -55,7 +55,7 @@ namespace cs
                 Piece piece = new Sword(); piece.player = 0; plate[0][0] = piece; 
                 piece = new Sword(); piece.player = 1; plate[0][2] = piece; 
                 piece = new Lance(); piece.player = 1; plate[2][2] = piece; 
-                piece = new Lance(); piece.player = 0; plate[3][2] = piece; 
+                piece = new Ram(); piece.player = 0; plate[3][2] = piece; 
                 piece = new Arrow(); piece.player = 1; plate[4][2] = piece; 
                 piece = new Arrow(); piece.player = 0; plate[4][4] = piece; 
                 piece = new Flag(); piece.player = 1; plate[10][6] = piece; 
@@ -80,8 +80,8 @@ namespace cs
         }
 
         public static void print(){
+            Console.WriteLine("玩家"+Program.player.ToString() + "行动。玩家0石头："+Program.stone[0].ToString()+"玩家1石头："+Program.stone[1]);
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("玩家"+Program.player.ToString());
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0 1 2 3 4 5  ");
             for(int i = 0; i < 15; ++ i){
                 if(i<5) Console.ForegroundColor = ConsoleColor.Blue;

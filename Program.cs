@@ -71,6 +71,7 @@ namespace cs
             player=1-player;
             Plate.colRefresh();
         }
+        public static int[] stone;
 
         static void Main(string[] args)
         {
@@ -78,9 +79,13 @@ namespace cs
             Plate.init();
             flag=new bool[2];
             flag[0]=true;flag[1]=true;
+            stone=new int[2];
+            stone[0]=1;stone[1]=1;
 
 
             string lastSkill="";
+            bool isPush=false;
+            bool issteal=false;
             while(true){
                 Plate.print();
                 if(mode==0){                
@@ -99,12 +104,58 @@ namespace cs
                     Plate.colRefresh();
                     Plate.calMove(curx, cury);
                 } else if(mode==1){
-                    Console.WriteLine("ASDF-移动 J-行动 K-取消选择 " + Plate.getPrompt());
+                    Console.Write("ASDF-移动 J-行动 K-取消选择 " + Plate.getPrompt());
+                    if(Plate.plate[Plate.selx][Plate.sely]!=null && !Plate.plate[Plate.selx][Plate.sely].ismechanics()){
+                    if(Plate.selx>0 && Plate.plate[Plate.selx-1][Plate.sely]!=null && Plate.plate[Plate.selx-1][Plate.sely].ismechanics() && Plate.plate[Plate.selx-1][Plate.sely].player==player ||
+                    Plate.sely>0 && Plate.plate[Plate.selx][Plate.sely-1]!=null && Plate.plate[Plate.selx][Plate.sely-1].ismechanics() && Plate.plate[Plate.selx][Plate.sely-1].player==player  ||
+                    Plate.selx<14 && Plate.plate[Plate.selx+1][Plate.sely]!=null && Plate.plate[Plate.selx+1][Plate.sely].ismechanics() && Plate.plate[Plate.selx+1][Plate.sely].player==player  ||
+                    Plate.sely<14 && Plate.plate[Plate.selx][Plate.sely+1]!=null && Plate.plate[Plate.selx][Plate.sely+1].ismechanics() && Plate.plate[Plate.selx][Plate.sely+1].player==player )
+                        if(isPush) Console.Write(" O 关闭挟持"); else Console.Write(" O 开启挟持");
+                    }
+                    issteal=false;
+                    if(Plate.plate[Plate.selx][Plate.sely]!=null && !Plate.plate[Plate.selx][Plate.sely].ismechanics()){
+                    if(Plate.selx>0 && Plate.plate[Plate.selx-1][Plate.sely]!=null && Plate.plate[Plate.selx-1][Plate.sely].ismechanics() && Plate.plate[Plate.selx-1][Plate.sely].player!=player ||
+                    Plate.sely>0 && Plate.plate[Plate.selx][Plate.sely-1]!=null && Plate.plate[Plate.selx][Plate.sely-1].ismechanics() && Plate.plate[Plate.selx][Plate.sely-1].player!=player  ||
+                    Plate.selx<14 && Plate.plate[Plate.selx+1][Plate.sely]!=null && Plate.plate[Plate.selx+1][Plate.sely].ismechanics() && Plate.plate[Plate.selx+1][Plate.sely].player!=player  ||
+                    Plate.sely<14 && Plate.plate[Plate.selx][Plate.sely+1]!=null && Plate.plate[Plate.selx][Plate.sely+1].ismechanics() && Plate.plate[Plate.selx][Plate.sely+1].player!=player ){
+                        issteal=true;
+                        for(int i=Math.Max(0,Plate.selx-2); i<=Math.Min(14,Plate.selx+2);++i)
+                            for(int j=Math.Max(0,Plate.sely-2+Math.Abs(Plate.selx-i)); j<=Math.Min(14,Plate.sely+2-Math.Abs(Plate.selx-i));++j)
+                                if(Plate.plate[i][j]!=null && Plate.plate[i][j].player==1-player && !Plate.plate[i][j].ismechanics())
+                                    issteal=false;
+                        }
+                        if(issteal) Console.Write(" P 偷盗");
+                    }
+                    Console.WriteLine();
+
                     string answer=Console.ReadKey().Key.ToString();
                     if(answer=="W" && curx>0) curx--;
                     else if(answer=="S" && curx<14) curx++;
                     else if(answer=="D" && cury<14) cury++;
                     else if(answer=="A" && cury>0) cury--;
+                    else if(answer=="O") {
+                        isPush=!isPush;
+                        if(isPush){
+                            for(int i=0;i<15;++i)
+                                for(int j=0;j<15;++j)
+                                    if((i!=Plate.selx-2 && i!=Plate.selx-1 && i!=Plate.selx+1 && i!=Plate.selx+2 || j!=Plate.sely) &&
+                                        (j!=Plate.sely-2 && j!=Plate.sely-1 && j!=Plate.sely+1 && j!=Plate.sely+2 || i!=Plate.selx)){
+                                            Plate.plateCol[i][j]=ConsoleColor.Black;
+                                        }
+                        }
+                        else{
+                            Plate.colRefresh();
+                            Plate.calMove(Plate.selx, Plate.sely);
+                        }
+                    }
+                    else if(answer=="P" && issteal){
+                        if(curx>0 && Plate.plate[curx-1][cury]!=null && Plate.plate[curx-1][cury].ismechanics()) Plate.plate[curx-1][cury].player=player;
+                        if(cury>0 && Plate.plate[curx][cury-1]!=null && Plate.plate[curx][cury-1].ismechanics()) Plate.plate[curx][cury-1].player=player;
+                        if(curx<14 && Plate.plate[curx+1][cury]!=null && Plate.plate[curx+1][cury].ismechanics()) Plate.plate[curx+1][cury].player=player;
+                        if(cury<14 && Plate.plate[curx][cury+1]!=null && Plate.plate[curx][cury+1].ismechanics()) Plate.plate[curx][cury+1].player=player;
+                        turnTurn();
+                        continue;
+                    }
                     else if(answer=="K"){
                         mode=0;
                         Plate.colRefresh();
@@ -112,6 +163,7 @@ namespace cs
                     } else {
                         int response = Plate.listenKey(answer);
                         if(response==0){ //移动，返回0
+                            if(isPush) pushMec(Plate.selx, Plate.sely, curx, cury);
                             turnTurn();
                             continue;
                         } else if(response!=-1){ //不是无效按键
@@ -145,6 +197,54 @@ namespace cs
                 }
             }
             
+        }
+        static void pushMec(int srcx, int srcy, int dstx, int dsty){
+            bool move1=false, move2=false, move3=false, move4=false;
+            Piece selpiece;
+            if(srcx>0 && Plate.plate[srcx-1][srcy]!=null && Plate.plate[srcx-1][srcy].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
+                if(dstx>0 && (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
+                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+                    move1=true;
+                }
+            if(srcx<14 && Plate.plate[srcx+1][srcy]!=null && Plate.plate[srcx+1][srcy].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
+                if(dstx<14 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
+                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+                    move2=true;
+                }
+            if(srcy>0 && Plate.plate[srcx][srcy-1]!=null && Plate.plate[srcx][srcy-1].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
+                if(dsty>0 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
+                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+                    move3=true;
+                } 
+            if(srcy<14 && Plate.plate[srcx][srcy+1]!=null && Plate.plate[srcx][srcy+1].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
+                if(dsty<14 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
+                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+                    move4=true;
+                }    
+            if(move1){
+                selpiece = Plate.plate[srcx-1][srcy];
+                selpiece.wait=0;
+                Plate.plate[dstx-1][dsty]=selpiece;
+                Plate.plate[srcx-1][srcy]=null;
+            }
+            if(move2){
+                    selpiece = Plate.plate[srcx+1][srcy];
+                    selpiece.wait=0;
+                    Plate.plate[dstx+1][dsty]=selpiece;
+                    Plate.plate[srcx+1][srcy]=null;
+            }
+            if(move3){
+                    selpiece = Plate.plate[srcx][srcy-1];
+                    selpiece.wait=0;
+                    Plate.plate[dstx][dsty-1]=selpiece;
+                    Plate.plate[srcx][srcy-1]=null;
+            }
+            if(move4){
+                    selpiece = Plate.plate[srcx][srcy+1];
+                    selpiece.wait=0;
+                    Plate.plate[dstx][dsty+1]=selpiece;
+                    Plate.plate[srcx][srcy+1]=null;
+            }
         }
     }
 }
