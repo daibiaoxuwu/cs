@@ -35,22 +35,25 @@ namespace cs
 
 
         static bool[] flag;
-
+        public static bool[] assassin;
         static void turnTurn(){
             Plate.turnTurn();
             for(int p=0;p<=1;++p){
                 if(flag[p]){
                     bool findflag=false;
+                    bool findKing=false;
                     int maxvalue=-1,maxx=0, maxy=0;
                     for(int i = 0; i < 15; ++i){
                         for(int j = 0; j < 15; ++j){
                             if(Plate.plate[i][j]==null || Plate.plate[i][j].player!=p) continue;
+                            if(Plate.plate[i][j].dizzy>0) Plate.plate[i][j].dizzy--;
                             if(Plate.plate[i][j].value()>maxvalue){
                                 if(maxvalue<Plate.plate[i][j].value()){
                                     maxvalue=Plate.plate[i][j].value();
                                     maxx=i;maxy=j;
                                 }
                             }
+                            if(Plate.plate[i][j] is King) findKing=true;
                             if(Plate.plate[i][j] is Flag){
                                 if((p==0 && i>9) || (p==1 && i<5)){
                                     Console.WriteLine("玩家"+p.ToString()+"通过插旗获得胜利。");
@@ -64,11 +67,15 @@ namespace cs
                         flag[p]=false;
                         Plate.plate[maxx][maxy]=null;
                     }
+                    if(findKing==false){
+                        Console.WriteLine("玩家"+(1-p).ToString()+"获得胜利。");
+                        string answer=Console.ReadKey().Key.ToString();
+                    }
                 }
             }
 
             mode=0;
-            player=1-player;
+            if(!assassin[1-player]) player=1-player; else assassin[1-player]=false;
             Plate.colRefresh();
         }
         public static int[] stone;
@@ -79,6 +86,8 @@ namespace cs
             Plate.init();
             flag=new bool[2];
             flag[0]=true;flag[1]=true;
+            assassin=new bool[2];
+            assassin[0]=false;assassin[1]=false;
             stone=new int[2];
             stone[0]=1;stone[1]=1;
 
@@ -206,19 +215,19 @@ namespace cs
                     if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
                     move1=true;
                 }
-            if(srcx<14 && Plate.plate[srcx+1][srcy]!=null && Plate.plate[srcx+1][srcy].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
-                if(dstx<14 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
-                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+            if(srcx<14 && Plate.plate[srcx+1][srcy]!=null && Plate.plate[srcx+1][srcy].ismechanics() && Plate.plate[srcx+1][srcy].player==player )
+                if(dstx<14 &&  (Plate.plate[dstx+1][dsty]==null || Plate.plate[srcx+1][srcy] is Ram)){
+                    if(Plate.plate[dstx+1][dsty]!=null && Plate.plate[dstx+1][dsty] is Wall) stone[player]++;
                     move2=true;
                 }
-            if(srcy>0 && Plate.plate[srcx][srcy-1]!=null && Plate.plate[srcx][srcy-1].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
-                if(dsty>0 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
-                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+            if(srcy>0 && Plate.plate[srcx][srcy-1]!=null && Plate.plate[srcx][srcy-1].ismechanics() && Plate.plate[srcx][srcy-1].player==player )
+                if(dsty>0 &&  (Plate.plate[dstx][dsty-1]==null || Plate.plate[srcx][srcy-1] is Ram)){
+                    if(Plate.plate[dstx][dsty-1]!=null && Plate.plate[dstx][dsty-1] is Wall) stone[player]++;
                     move3=true;
                 } 
-            if(srcy<14 && Plate.plate[srcx][srcy+1]!=null && Plate.plate[srcx][srcy+1].ismechanics() && Plate.plate[srcx-1][srcy].player==player )
-                if(dsty<14 &&  (Plate.plate[dstx-1][dsty]==null || Plate.plate[srcx-1][srcy] is Ram)){
-                    if(Plate.plate[dstx-1][dsty]!=null && Plate.plate[dstx-1][dsty] is Wall) stone[player]++;
+            if(srcy<14 && Plate.plate[srcx][srcy+1]!=null && Plate.plate[srcx][srcy+1].ismechanics() && Plate.plate[srcx][srcy+1].player==player )
+                if(dsty<14 &&  (Plate.plate[dstx][dsty+1]==null || Plate.plate[srcx][srcy+1] is Ram)){
+                    if(Plate.plate[dstx][dsty+1]!=null && Plate.plate[dstx][dsty+1] is Wall) stone[player]++;
                     move4=true;
                 }    
             if(move1){

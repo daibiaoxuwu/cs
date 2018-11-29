@@ -30,5 +30,6 @@ namespace cs
         
         public int wait = 0, tire=0;
         public int waitx, waity;
+        public int dizzy;
     }
 }
