@@ -8,6 +8,7 @@ namespace cs
         public override bool canAtk(){return false;}
         public override bool ismovable(){return false;}
         public override void walk(int x, int y){}
+        public override int value(){return -1;}
         int srcx, srcy;
         public ArrowSnipeToken(int srcx, int srcy, int player){
             this.srcx = srcx;

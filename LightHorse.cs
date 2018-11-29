@@ -6,6 +6,7 @@ namespace cs
     {
         
         public override string getName(){return "轻";}
+        public override int value(){return 12;}
 
         public override void walk(int x, int y){ //计算棋子移动范围 
             if(tire==0) Plate.walk(x,y,4,4,x,y);

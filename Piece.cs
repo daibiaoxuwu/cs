@@ -14,6 +14,7 @@ namespace cs
         public virtual void walk(int x, int y){ //计算棋子移动范围 
             Plate.walk(x,y,2,2,x,y);
         }
+        public abstract int value();//价值，夺旗后被牺牲的顺序
 
         //skill
         public virtual string getPrompt(){

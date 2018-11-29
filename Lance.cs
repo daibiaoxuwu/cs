@@ -7,6 +7,7 @@ namespace cs
         public override string getName(){return "矛";}
         public override string getDefLevel(){return "重甲";}
         public override bool isAgile(){return true;}
+        public override int value(){return 8;}
 
         public override void walk(int x, int y){ //计算棋子移动范围 
 

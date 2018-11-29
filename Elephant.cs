@@ -6,6 +6,7 @@ namespace cs
         public override string getName(){return "象";}
         public override string getDefLevel(){return "无";}
         public override string getPrompt(){return "U-挟持";}
+        public override int value(){return 13;}
         public override void walk(int x, int y){ //计算棋子移动范围 
             for(int i = x - 2; i <= x + 2; ++ i)
                 for(int j = y - 2; j <= y + 2; ++ j)

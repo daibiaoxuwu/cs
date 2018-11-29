@@ -11,6 +11,7 @@ namespace cs
         public override bool canAtk(){return false;}
         public override bool isAgile(){return true;}
         public override string getPrompt(){return "U-射击";}
+        public override int value(){return 9;}
 
         public override void calSkill(int selx, int sely){
             for(int i = 1; i <= arrowLength; ++ i){

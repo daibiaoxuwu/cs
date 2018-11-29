@@ -8,6 +8,7 @@ namespace cs
         public override string getName(){return "盾";}
         public override string getDefLevel(){return "盾牌";}
         public override string getPrompt(){return "U-防御";}
+        public override int value(){return 10;}
 
         public override void calSkill(int selx, int sely){
             int x = selx, y = sely;
