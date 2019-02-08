@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace cs
 {
@@ -94,11 +95,42 @@ namespace cs
                 piece = new Wall(); piece.player = 2; plate[8][7] = piece; 
                 piece = new Wall(); piece.player = 2; plate[7][7] = piece; 
 
+                piece = new Sword(); piece.player = 1; plate[11][1] = piece; 
+                piece = new Sword(); piece.player = 1; plate[10][3] = piece; 
+                piece = new Sword(); piece.player = 1; plate[10][5] = piece; 
+                piece = new Sword(); piece.player = 1; plate[12][7] = piece; 
+                piece = new Sword(); piece.player = 1; plate[12][9] = piece; 
+                piece = new Lance(); piece.player = 1; plate[10][4] = piece; 
+                piece = new Lance(); piece.player = 1; plate[10][2] = piece; 
+                piece = new Lance(); piece.player = 1; plate[10][13] = piece; 
+                piece = new Lance(); piece.player = 1; plate[11][12] = piece; 
+                piece = new Lance(); piece.player = 1; plate[11][11] = piece; 
+                piece = new Arrow(); piece.player = 1; plate[11][5] = piece; 
+                piece = new Arrow(); piece.player = 1; plate[10][4] = piece; 
+                piece = new Crossbow(); piece.player = 1; plate[10][7] = piece; 
+                piece = new Crossbow(); piece.player = 1; plate[10][8] = piece; 
+                piece = new Shield(); piece.player = 1; plate[13][7] = piece; 
+                piece = new Shield(); piece.player = 1; plate[13][9] = piece; 
+                piece = new Rook(); piece.player = 1; plate[11][0] = piece; 
+                piece = new Rook(); piece.player = 1; plate[11][14] = piece; 
+                piece = new LightHorse(); piece.player = 1; plate[10][0] = piece; 
+                piece = new LightHorse(); piece.player = 1; plate[10][1] = piece; 
+                piece = new HeavyHorse(); piece.player = 1; plate[11][10] = piece; 
+                piece = new HeavyHorse(); piece.player = 1; plate[10][14] = piece; 
+                piece = new Elephant(); piece.player = 1; plate[10][9] = piece; 
+                piece = new Flag(); piece.player = 1; plate[10][10] = piece; 
+                piece = new Ram(); piece.player = 1; plate[10][11] = piece; 
+                piece = new Catapult(); piece.player = 1; plate[13][3] = piece; 
+                piece = new WildFire(); piece.player = 1; plate[13][9] = piece; 
+                piece = new Tower(); piece.player = 1; plate[13][8] = piece; 
+                piece = new Assassin(); piece.player = 1; plate[11][8] = piece; 
+                piece = new Dragon(); piece.player = 1; plate[12][10] = piece; 
                 piece = new King(); piece.player = 1; plate[14][7] = piece; 
-                piece = new Flag(); piece.player = 1; plate[14][10] = piece; 
-                for(int i=0;i<14;i+=2){ piece = new Sword(); piece.player = 1; plate[10][i] = piece; }
-                for(int i=1;i<14;i+=2){ piece = new Lance(); piece.player = 1; plate[10][i] = piece; }
-                
+                piece = new Wall(); piece.player = 1; plate[13][5] = piece; 
+                piece = new Wall(); piece.player = 1; plate[13][6] = piece; 
+                piece = new Wall(); piece.player = 1; plate[12][6] = piece; 
+                piece = new Wall(); piece.player = 1; plate[11][6] = piece; 
+
                 colRefresh();
                 calMove(0,0);
             }
@@ -283,10 +315,10 @@ namespace cs
         public static int listenKey(string answer){
             Piece piece = plate[selx][sely];
             if(!piece.getPrompt().Equals("")){
-                string[] prompts = piece.getPrompt().Split(" ");
+                string[] prompts=Regex.Split(piece.getPrompt()," ",RegexOptions.IgnoreCase);
                 
                 foreach(string prompt in prompts){
-                    if(answer[0]==prompt[0]){
+                    if(answer.ToCharArray()[0] ==prompt.ToCharArray()[0]){
                         piece.selectedSkill = answer;
                         if(piece is Assassin){piece.tire=3;return 0;} else return 2;
                     }

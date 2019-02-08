@@ -4,7 +4,6 @@ namespace cs
 {
     class Dragon : Piece
     {
-        int arrowLength=15;
         public override string getName(){return "龙";}
         public override int value(){return 15;}
         public override string getDefLevel(){return "无";}
