@@ -146,6 +146,7 @@ namespace cs
         }
 
         public static void print(){
+            Console.Clear();
             Console.WriteLine("玩家"+Program.player.ToString() + "行动。玩家0石头："+Program.stone[0].ToString()+"玩家1石头："+Program.stone[1]);
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0 1 2 3 4 5  ");
